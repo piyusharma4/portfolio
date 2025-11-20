@@ -658,7 +658,7 @@ h1.glitch::after {
     }
 }
 
-/* Timeline */
+/* Timeline (System Log) */
 .timeline {
     position: relative;
     max-width: 800px;
@@ -669,11 +669,12 @@ h1.glitch::after {
     content: '';
     position: absolute;
     width: 2px;
-    background: var(--glass-border);
+    background: var(--accent-color);
     top: 0;
     bottom: 0;
     left: 50%;
     margin-left: -1px;
+    box-shadow: 0 0 10px var(--accent-glow);
 }
 
 .timeline-item {
@@ -693,10 +694,10 @@ h1.glitch::after {
 .timeline-item::after {
     content: '';
     position: absolute;
-    width: 16px;
-    height: 16px;
-    right: -8px;
-    background-color: var(--bg-color);
+    width: 12px;
+    height: 12px;
+    right: -6px;
+    background-color: #000;
     border: 2px solid var(--accent-color);
     top: 20px;
     border-radius: 0;
@@ -706,21 +707,50 @@ h1.glitch::after {
 }
 
 .timeline-item.right::after {
-    left: -8px;
+    left: -6px;
 }
 
 .timeline-content {
     padding: 20px;
     position: relative;
+    background: rgba(0, 20, 0, 0.3);
+    border: 1px solid var(--accent-secondary);
+    border-left: 4px solid var(--accent-secondary);
+}
+
+.timeline-content::before {
+    content: 'LOG_ENTRY::';
+    font-size: 0.7rem;
+    color: var(--accent-secondary);
+    opacity: 0.7;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.timeline-content h3 {
+    color: var(--accent-color);
+    font-size: 1.2rem;
+    margin-bottom: 0.2rem;
+}
+
+.timeline-content h4 {
+    color: var(--text-primary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
 }
 
 .timeline-content ul {
     margin-left: 20px;
     margin-top: 10px;
     color: var(--text-secondary);
+    list-style-type: square;
 }
 
-/* Projects Grid */
+.timeline-content ul li::marker {
+    color: var(--accent-secondary);
+}
+
+/* Projects Grid (Data Modules) */
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -728,26 +758,63 @@ h1.glitch::after {
 }
 
 .project-card {
-    overflow: hidden;
-    transition: transform 0.3s;
+    background: #000;
     border: 1px solid var(--glass-border);
+    position: relative;
+    transition: all 0.3s ease;
 }
 
 .project-card:hover {
-    transform: translateY(-5px);
     border-color: var(--accent-color);
-    box-shadow: 0 0 15px var(--accent-glow);
+    box-shadow: 0 0 20px rgba(10, 255, 240, 0.15);
+    transform: translateY(-5px);
+}
+
+.project-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--accent-color);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s ease;
+}
+
+.project-card:hover::before {
+    transform: scaleX(1);
 }
 
 .project-image {
     height: 200px;
     width: 100%;
-    background-color: #111;
+    object-fit: cover;
     border-bottom: 1px solid var(--glass-border);
+    filter: grayscale(100%) contrast(1.2);
+    transition: filter 0.3s;
+}
+
+.project-card:hover .project-image {
+    filter: grayscale(0%) contrast(1);
 }
 
 .project-info {
     padding: 1.5rem;
+}
+
+.project-info h3 {
+    color: var(--accent-color);
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.project-info p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
 }
 
 .tags {
@@ -758,12 +825,18 @@ h1.glitch::after {
 }
 
 .tags span {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.8rem;
-    background: rgba(10, 255, 240, 0.1);
-    border: 1px solid var(--glass-border);
-    border-radius: 0;
-    color: var(--accent-color);
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    background: transparent;
+    border: 1px solid var(--accent-secondary);
+    color: var(--accent-secondary);
+    text-transform: uppercase;
+}
+
+.tags span:hover {
+    background: var(--accent-secondary);
+    color: #000;
+    cursor: default;
 }
 
 /* Contact */
