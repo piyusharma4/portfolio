@@ -33,6 +33,30 @@ body {
     background-size: 30px 30px;
 }
 
+/* Scanlines */
+.scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.2));
+    background-size: 100% 4px;
+    pointer-events: none;
+    z-index: 9998;
+    animation: scanline-move 1s linear infinite;
+}
+
+@keyframes scanline-move {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: 0 4px;
+    }
+}
+
 /* Custom Cursor */
 .cursor-dot,
 .cursor-outline {
@@ -136,6 +160,28 @@ body {
     max-width: 600px;
 }
 
+/* System Status */
+.sys-status {
+    font-family: var(--font-main);
+    color: var(--accent-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+    animation: blink 2s infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
 h1.glitch {
     font-family: var(--font-main);
     font-size: 4rem;
@@ -146,6 +192,83 @@ h1.glitch {
     text-shadow: 2px 2px var(--accent-color);
 }
 
+h1.glitch::before,
+h1.glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-color);
+}
+
+h1.glitch::before {
+    left: 2px;
+    text-shadow: -1px 0 red;
+    clip: rect(24px, 550px, 90px, 0);
+    animation: glitch-anim-2 3s infinite linear alternate-reverse;
+}
+
+h1.glitch::after {
+    left: -2px;
+    text-shadow: -1px 0 blue;
+    clip: rect(85px, 550px, 140px, 0);
+    animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-1 {
+    0% {
+        clip: rect(20px, 9999px, 80px, 0);
+    }
+
+    20% {
+        clip: rect(100px, 9999px, 140px, 0);
+    }
+
+    40% {
+        clip: rect(50px, 9999px, 90px, 0);
+    }
+
+    60% {
+        clip: rect(10px, 9999px, 60px, 0);
+    }
+
+    80% {
+        clip: rect(120px, 9999px, 160px, 0);
+    }
+
+    100% {
+        clip: rect(30px, 9999px, 70px, 0);
+    }
+}
+
+@keyframes glitch-anim-2 {
+    0% {
+        clip: rect(120px, 9999px, 160px, 0);
+    }
+
+    20% {
+        clip: rect(10px, 9999px, 60px, 0);
+    }
+
+    40% {
+        clip: rect(80px, 9999px, 120px, 0);
+    }
+
+    60% {
+        clip: rect(30px, 9999px, 70px, 0);
+    }
+
+    80% {
+        clip: rect(100px, 9999px, 140px, 0);
+    }
+
+    100% {
+        clip: rect(50px, 9999px, 90px, 0);
+    }
+}
+
 .subtitle {
     font-size: 1.5rem;
     color: var(--accent-color);
@@ -154,10 +277,38 @@ h1.glitch {
     padding-left: 15px;
 }
 
-.tagline {
+/* Typing Effect */
+.typing-text {
     font-size: 1.2rem;
     color: var(--text-secondary);
     margin-bottom: 2rem;
+    border-right: 2px solid var(--accent-color);
+    white-space: nowrap;
+    overflow: hidden;
+    width: 0;
+    animation: typing 3.5s steps(40, end) forwards, blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink-caret {
+
+    from,
+    to {
+        border-color: transparent;
+    }
+
+    50% {
+        border-color: var(--accent-color);
+    }
 }
 
 .cta-group {
