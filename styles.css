@@ -925,6 +925,43 @@ footer {
         max-width: 320px;
     }
 
+    /* Fix Tagline Overflow */
+    .typing-text {
+        white-space: normal;
+        overflow: visible;
+        width: auto;
+        border-right: none;
+        animation: none;
+        /* Disable typing effect on mobile for wrapping */
+        text-align: center;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+    }
+
+    /* Fix Buttons Overflow */
+    .cta-group {
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        gap: 0.8rem;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+        /* Full width buttons on very small screens */
+        max-width: 200px;
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    /* Fix Social Links Overflow */
+    .social-links {
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-bottom: 1rem;
+    }
+
     /* Section Spacing */
     .section-padding {
         padding: 4rem 5%;
