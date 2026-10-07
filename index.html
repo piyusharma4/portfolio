@@ -1,328 +1,461 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="no-js">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Piyush Sharma | AI Strategy & Innovation</title>
+    <title>Piyush Sharma — AI Strategy &amp; Innovation</title>
+    <meta name="description"
+        content="Piyush Sharma works on AI strategy and innovation at Samsung Research, Noida — taking models out of research and into products used by 100M+ people.">
+    <meta name="theme-color" content="#ece8e1">
+    <meta property="og:title" content="Piyush Sharma — AI Strategy & Innovation">
+    <meta property="og:description" content="Taking AI out of research and into products used by 100M+ people.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="assets/img/og.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="icon"
+        href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23131211'/%3E%3Crect x='8' y='8' width='4' height='4' fill='%23ece8e1'/%3E%3Crect x='14' y='8' width='4' height='4' fill='%23ece8e1'/%3E%3Crect x='8' y='14' width='4' height='4' fill='%23ece8e1'/%3E%3Crect x='20' y='14' width='4' height='4' fill='%23ff4f1f'/%3E%3Crect x='8' y='20' width='4' height='4' fill='%23ece8e1'/%3E%3C/svg%3E">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,300..500;1,6..72,300..500&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        // Hide animated elements only when JS runs and motion is allowed;
+        // script.js removes this class if the animation libraries fail to load.
+        document.documentElement.classList.remove('no-js');
+        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.classList.add('anim');
+        }
+    </script>
 </head>
 
 <body>
-    <div class="scanlines"></div>
-    <div class="cursor-dot"></div>
-    <div class="cursor-outline"></div>
+    <a class="skip" href="#main">Skip to content</a>
+    <div class="grain" aria-hidden="true"></div>
 
-    <nav class="glass-nav">
-        <div class="logo">PS_Portfolio</div>
-        <ul class="nav-links">
-            <li><a href="#hero">/HOME</a></li>
-            <li><a href="#about">/ABOUT</a></li>
-            <li><a href="#experience">/EXP</a></li>
-            <li><a href="#projects">/PROJECTS</a></li>
-            <li><a href="#contact">/CONTACT</a></li>
-        </ul>
-    </nav>
+    <!-- Contextual cursor label + project preview -->
+    <div class="cursor" aria-hidden="true"><span class="cursor__label"></span></div>
+    <div class="preview" aria-hidden="true">
+        <div class="preview__inner"></div>
+    </div>
 
-    <main>
-        <section id="hero" class="hero-section">
-            <div class="hero-content">
-                <div class="sys-status">[SYSTEM::ONLINE]</div>
-                <h1 class="glitch" data-text="Piyush Sharma">Piyush Sharma</h1>
-                <h2 class="subtitle">AI Strategy & Innovation</h2>
-                <p class="tagline typing-text">Bridging the gap between research, innovation to commercialized
-                    products...</p>
-                <div class="cta-group">
-                    <a href="#contact" class="btn-primary">Get in Touch</a>
-                    <a href="#projects" class="btn-secondary">View Work</a>
-                </div>
-                <div class="social-links">
-                    <a href="https://linkedin.com/in/piyusharma4" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/piyusharma4" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="https://huggingface.co/piyusharma" target="_blank">🤗</a> <!-- HuggingFace Icon -->
-                    <a href="https://www.kaggle.com/piyusharma" target="_blank"><i class="fab fa-kaggle"></i></a>
-                </div>
+    <header class="nav" data-nav>
+        <a href="#top" class="nav__mark" data-scroll-to>Piyush Sharma</a>
+        <nav class="nav__links" aria-label="Primary">
+            <a href="#work" data-scroll-to><span>01</span>Work</a>
+            <a href="#experience" data-scroll-to><span>02</span>Experience</a>
+            <a href="#about" data-scroll-to><span>03</span>About</a>
+            <a href="#contact" data-scroll-to><span>04</span>Contact</a>
+        </nav>
+        <div class="nav__meta">Noida, IN <span class="nav__clock" data-clock>--:--</span></div>
+        <button class="nav__toggle" aria-expanded="false" aria-controls="menu">Menu</button>
+    </header>
+
+    <div class="menu" id="menu" aria-hidden="true">
+        <nav aria-label="Mobile">
+            <a href="#work" data-scroll-to><span>01</span>Work</a>
+            <a href="#experience" data-scroll-to><span>02</span>Experience</a>
+            <a href="#about" data-scroll-to><span>03</span>About</a>
+            <a href="#contact" data-scroll-to><span>04</span>Contact</a>
+        </nav>
+        <p class="menu__foot">justpiyushsharma@gmail.com</p>
+    </div>
+
+    <main id="main">
+        <!-- ============ HERO ============ -->
+        <section class="hero" id="top" data-theme="light">
+            <h1 class="sr-only">Piyush Sharma — AI Strategy &amp; Innovation at Samsung Research</h1>
+
+            <div class="hero__field" data-field>
+                <canvas aria-hidden="true"></canvas>
+                <!-- Fallback name for no-JS / reduced data -->
+                <p class="hero__fallback" aria-hidden="true">Piyush<br>Sharma</p>
             </div>
-            <div class="hero-visual">
-                <div class="glass-card tilt-card">
-                    <div class="card-content">
-                        <div class="profile-img-container">
-                            <img src="assets/profile.png" alt="Profile Avatar" class="profile-img">
-                        </div>
-                        <h3>Business Analyst</h3>
-                        <p>Samsung Research, Noida</p>
-                        <p>M.Tech in AI @ IIT Jodhpur</p>
-                        <div class="stat-row">
-                            <div class="stat">
-                                <span class="number">5+</span>
-                                <span class="label">Years Exp.</span>
-                            </div>
-                            <div class="stat">
-                                <span class="number">100M+</span>
-                                <span class="label">Users Impacted</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <section id="about" class="section-padding">
-            <h2 class="section-title">About Me</h2>
-            <div class="about-grid">
-                <div class="about-text glass-panel">
-                    <p>Business Analyst at Samsung Research Institute, Noida with 4+ years of expertise in AI/ML
-                        innovation and
-                        technology strategy. I specialize in developing LLM-based AI solutions in Visual, Gaming, and
-                        Health domains.</p>
-                    <p>I have a proven track record of resolving data-related challenges, transforming research
-                        prototypes into scalable products, and integrating innovative startups into the Samsung
-                        ecosystem.</p>
-                    <div class="education-list">
-                        <div class="edu-item">
-                            <i class="fas fa-graduation-cap"></i>
-                            <div>
-                                <h4>M.Tech in Artificial Intelligence</h4>
-                                <p>IIT Jodhpur | 2025-2026</p>
-                            </div>
-                        </div>
-                        <div class="edu-item">
-                            <i class="fas fa-graduation-cap"></i>
-                            <div>
-                                <h4>MBA in IT</h4>
-                                <p>Swami Vivekananda Subharti University | 2021-2023</p>
-                            </div>
-                        </div>
-                        <div class="edu-item">
-                            <i class="fas fa-graduation-cap"></i>
-                            <div>
-                                <h4>B.Tech in Computer Science (ML Specialization)</h4>
-                                <p>Amity University | 2016-2020</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="skills-orbit-container">
-                    <!-- Skills Orbit Visual will be here -->
-                    <div class="orbit-center">AI/ML</div>
-                    <div class="orbit-ring ring-1">
-                        <span class="orbit-item" style="--i:1">Python</span>
-                        <span class="orbit-item" style="--i:2">SQL</span>
-                        <span class="orbit-item" style="--i:3">TensorFlow</span>
-                    </div>
-                    <div class="orbit-ring ring-2">
-                        <span class="orbit-item" style="--i:1">PyTorch</span>
-                        <span class="orbit-item" style="--i:2">LangChain</span>
-                        <span class="orbit-item" style="--i:3">CrewAI</span>
-                        <span class="orbit-item" style="--i:4">OpenCV</span>
-                    </div>
-                    <div class="orbit-ring ring-3">
-                        <span class="orbit-item" style="--i:1">Azure</span>
-                        <span class="orbit-item" style="--i:2">Docker</span>
-                        <span class="orbit-item" style="--i:3">Snowflake</span>
-                        <span class="orbit-item" style="--i:4">Tableau</span>
-                        <span class="orbit-item" style="--i:5">Git</span>
-                    </div>
+            <div class="hero__base">
+                <p class="hero__fig mono" data-intro>
+                    Fig. 01 — Kinetic type<br>
+                    <span data-points>0000</span> tiles on a water surface.<br>
+                    <span class="hero__hint">Move across the name to make it ripple.</span>
+                </p>
+
+                <p class="hero__lede" data-intro>
+                    AI strategy &amp; innovation at <em>Samsung&nbsp;Research.</em>
+                    I take models out of papers and put them into products.
+                </p>
+
+                <div class="hero__readout mono" data-intro aria-hidden="true">
+                    <div class="hero__scroll">Scroll <span class="arrow">↓</span></div>
                 </div>
             </div>
         </section>
 
-        <section id="experience" class="section-padding">
-            <h2 class="section-title">Experience</h2>
-            <div class="timeline">
-                <div class="timeline-item left">
-                    <div class="timeline-content glass-panel">
-                        <span class="date">March 2023 - Present</span>
-                        <h3>Samsung Research Institute</h3>
-                        <h4>Manager, AI Strategy & Innovation Part</h4>
-                        <ul>
-                            <li>Lead integration of AI features in flagship Samsung smartphones (News Rec, Blood
-                                Glucose, etc.).</li>
-                            <li>Built internal LLM-based RAG system reducing retrieval time by 95%.</li>
-                            <li>Orchestrated collaborations with IITs (Delhi, Kanpur, Ropar) and startups (Sarvam AI,
-                                Jivi AI, Beatoven.AI, Validsoft, Neural Defend).</li>
-                        </ul>
-                    </div>
+        <!-- ============ STATEMENT ============ -->
+        <section class="statement" data-theme="light">
+            <p class="label mono"><span>(00)</span> Signal</p>
+            <p class="statement__text" data-resolve>
+                Most AI research never leaves the lab. My work is the <em>bridge</em> — turning research and
+                prototypes into features that ship inside Galaxy phones, used by more than a hundred million
+                people.
+            </p>
+
+            <dl class="stats">
+                <div class="stat">
+                    <dt class="mono">Years in AI &amp; data</dt>
+                    <dd><span data-count="5">5</span><sup>+</sup></dd>
                 </div>
-                <div class="timeline-item right">
-                    <div class="timeline-content glass-panel">
-                        <span class="date">Oct 2021 - May 2023</span>
-                        <h3>Tata Consultancy Services</h3>
-                        <h4>Data Analyst, System Engineer</h4>
-                        <ul>
-                            <li>Built financial dashboards for DocuSign (99% uptime).</li>
-                            <li>Optimized Snowflake workflows reducing query times by 25%.</li>
-                            <li>Received performance award for exemplary problem solving.</li>
-                        </ul>
-                    </div>
+                <div class="stat">
+                    <dt class="mono">Users reached by shipped AI features</dt>
+                    <dd><span data-count="100">100</span><sup>M+</sup></dd>
                 </div>
-                <div class="timeline-item left">
-                    <div class="timeline-content glass-panel">
-                        <span class="date">Internship</span>
-                        <h3>AT&T Communications</h3>
-                        <h4>Data Science Intern</h4>
-                        <ul>
-                            <li>Developed POC for genre-based music generation using RNN-LSTM.</li>
-                        </ul>
-                    </div>
+                <div class="stat">
+                    <dt class="mono">Faster retrieval with an internal RAG system</dt>
+                    <dd><span data-count="95">95</span><sup>%</sup></dd>
                 </div>
-            </div>
+                <div class="stat">
+                    <dt class="mono">Research &amp; startup partners</dt>
+                    <dd><span data-count="8">8</span></dd>
+                </div>
+            </dl>
         </section>
 
-        <section id="projects" class="section-padding">
-            <h2 class="section-title">Featured Projects</h2>
-            <div class="projects-grid">
-                <div class="project-card glass-panel">
-                    <img src="assets/ap_chatbot.jpg" alt="Acharya Prashant AI Chatbot" class="project-image">
-                    <div class="project-info">
-                        <h3>Acharya Prashant AI Chatbot</h3>
-                        <p>RAG-based AI chatbot trained on Acharya Prashant's teachings. Scraped English articles and
-                            used ChromaDB as vectorDB for context retrieval.</p>
-                        <div class="project-links">
-                            <a href="https://ap-project-2026.onrender.com" target="_blank" class="link-item"><i
-                                    class="fas fa-external-link-alt"></i> Live Site</a>
-                            <a href="https://ap-project-2026.onrender.com/chat" target="_blank" class="link-item"><i
-                                    class="fas fa-comment-dots"></i> Chat</a>
-                            <a href="https://github.com/piyusharma4/AP_Project_2026" target="_blank"
-                                class="link-item"><i class="fab fa-github"></i> Code</a>
-                            <a href="https://www.kaggle.com/datasets/piyusharma/acharya-prashant-english-articles"
-                                target="_blank" class="link-item"><i class="fab fa-kaggle"></i> Dataset</a>
-                        </div>
-                        <div class="tags">
-                            <span>RAG</span><span>ChromaDB</span><span>Flask</span><span>Python</span>
-                        </div>
-                    </div>
+        <!-- ============ WORK ============ -->
+        <section class="work" id="work" data-theme="light">
+            <header class="section-head">
+                <p class="label mono"><span>(01)</span> Work</p>
+                <h2 class="section-title" data-split>Selected<br><em>work</em></h2>
+                <p class="section-count mono">08 projects</p>
+            </header>
+
+            <!-- Featured 01 -->
+            <article class="feature">
+                <div class="feature__meta">
+                    <p class="feature__no mono">01</p>
+                    <h3 class="feature__title" data-split>Acharya Prashant AI&nbsp;Chatbot</h3>
+                    <p class="feature__desc">
+                        A retrieval-augmented chatbot grounded in Acharya Prashant's teachings. I scraped the
+                        English articles, built the dataset, and used ChromaDB as the vector store for context
+                        retrieval.
+                    </p>
+                    <ul class="tags mono">
+                        <li>RAG</li>
+                        <li>ChromaDB</li>
+                        <li>Flask</li>
+                        <li>Python</li>
+                    </ul>
+                    <ul class="links">
+                        <li><a href="https://ap-project-2026.onrender.com" target="_blank" rel="noopener">Live
+                                site</a></li>
+                        <li><a href="https://ap-project-2026.onrender.com/chat" target="_blank"
+                                rel="noopener">Chat</a></li>
+                        <li><a href="https://github.com/piyusharma4/AP_Project_2026" target="_blank"
+                                rel="noopener">Code</a></li>
+                        <li><a href="https://www.kaggle.com/datasets/piyusharma/acharya-prashant-english-articles"
+                                target="_blank" rel="noopener">Dataset</a></li>
+                    </ul>
                 </div>
-                <div class="project-card glass-panel">
-                    <img src="assets/project1.png" alt="Old Photo Restoration" class="project-image">
-                    <div class="project-info">
-                        <h3>Old Photo Restoration</h3>
-                        <p>End-to-end pipeline using GFPGAN and DeOldify to restore and colorize old photos.</p>
-                        <div class="tags">
-                            <span>Python</span><span>GFPGAN</span><span>Streamlit</span>
-                        </div>
+
+                <figure class="pipeline" data-pipeline>
+                    <figcaption class="mono">Fig. 02 — How a question becomes an answer</figcaption>
+                    <ol class="pipeline__steps">
+                        <li><span class="mono">01</span><b>Scrape</b><i>English articles</i></li>
+                        <li><span class="mono">02</span><b>Chunk</b><i>split into passages</i></li>
+                        <li><span class="mono">03</span><b>Embed</b><i>text → vectors</i></li>
+                        <li><span class="mono">04</span><b>Store</b><i>ChromaDB index</i></li>
+                        <li><span class="mono">05</span><b>Retrieve</b><i>top-k for the query</i></li>
+                        <li><span class="mono">06</span><b>Generate</b><i>grounded answer</i></li>
+                    </ol>
+                    <div class="pipeline__query mono" aria-hidden="true">
+                        <span class="pipeline__q">q</span>
+                        <span class="pipeline__typed" data-typed></span>
                     </div>
+                </figure>
+            </article>
+
+            <!-- Featured 02 -->
+            <article class="feature feature--flip">
+                <div class="feature__meta">
+                    <p class="feature__no mono">02</p>
+                    <h3 class="feature__title" data-split>Old Photo Restoration</h3>
+                    <p class="feature__desc">
+                        An end-to-end pipeline that restores faces with GFPGAN and brings colour back with
+                        DeOldify. Drag across the photograph to compare.
+                    </p>
+                    <ul class="tags mono">
+                        <li>Python</li>
+                        <li>GFPGAN</li>
+                        <li>DeOldify</li>
+                        <li>Streamlit</li>
+                    </ul>
                 </div>
-                <div class="project-card glass-panel">
-                    <img src="assets/project2.jpg" alt="LLM Podcast Summarizer" class="project-image">
-                    <div class="project-info">
-                        <h3>LLM Podcast Summarizer</h3>
-                        <p>Scrapes and summarizes long-form podcasts (Huberman Lab) using Llama 3.1.</p>
-                        <div class="project-links">
-                            <a href="https://www.kaggle.com/piyusharma/datasets" target="_blank" class="link-item"><i
-                                    class="fab fa-kaggle"></i> Datasets</a>
-                        </div>
-                        <div class="tags">
-                            <span>Llama 3.1</span><span>NLP</span><span>HuggingFace</span>
-                        </div>
+
+                <figure class="compare" data-compare data-cursor="drag">
+                    <img src="assets/img/restore-after.jpg" alt="Restored and colourised photograph of an elderly woman with a teacup"
+                        class="compare__img" loading="lazy" width="505" height="930">
+                    <div class="compare__before">
+                        <img src="assets/img/restore-before.jpg" alt="Original damaged black-and-white photograph"
+                            loading="lazy" width="505" height="930">
                     </div>
-                </div>
-                <div class="project-card glass-panel">
-                    <img src="assets/project3.png" alt="Hindi Digit Recognition" class="project-image">
-                    <div class="project-info">
-                        <h3>Hindi Digit Recognition</h3>
-                        <p>CNN model achieving 96% F1 score on Hindi-MNIST dataset.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/piyusharma4/Hindi-Numeric-Number-Recognization-using-Convolutional-Neural-Network"
-                                target="_blank" class="link-item"><i class="fab fa-github"></i> Code</a>
+                    <div class="compare__handle"><span></span></div>
+                    <span class="compare__tag compare__tag--l mono">Original</span>
+                    <span class="compare__tag compare__tag--r mono">Restored</span>
+                    <input type="range" min="0" max="100" value="50" class="compare__range"
+                        aria-label="Compare original and restored photograph">
+                </figure>
+            </article>
+
+            <!-- Index -->
+            <div class="index">
+                <p class="index__head mono"><span>No.</span><span>Project</span><span>Stack</span><span>Links</span>
+                </p>
+                <ol class="index__list">
+                    <li class="row" data-img="assets/img/podcast.jpg">
+                        <span class="row__no mono">03</span>
+                        <div class="row__main">
+                            <h3 class="row__title">LLM Podcast Summarizer</h3>
+                            <p class="row__desc">Scrapes and summarises long-form podcasts like Huberman Lab with Llama
+                                3.1.</p>
                         </div>
-                        <div class="tags">
-                            <span>TensorFlow</span><span>CNN</span><span>Deep Learning</span>
+                        <p class="row__stack mono">Llama 3.1 · NLP · Hugging Face</p>
+                        <p class="row__links"><a href="https://www.kaggle.com/piyusharma/datasets" target="_blank"
+                                rel="noopener">Datasets</a></p>
+                    </li>
+                    <li class="row" data-img="assets/img/digits.jpg">
+                        <span class="row__no mono">04</span>
+                        <div class="row__main">
+                            <h3 class="row__title">Hindi Digit Recognition</h3>
+                            <p class="row__desc">A CNN that reaches a 96% F1 score on the Hindi-MNIST dataset.</p>
                         </div>
-                    </div>
-                </div>
-                <div class="project-card glass-panel">
-                    <img src="assets/project4.png" alt="Gesture Recognition" class="project-image">
-                    <div class="project-info">
-                        <h3>Gesture Recognition</h3>
-                        <p>Real-time hand gesture control for OS tasks using OpenCV.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/piyusharma4/Fingure-Gesture-based-recognition-using-OpenCV-and-CNN"
-                                target="_blank" class="link-item"><i class="fab fa-github"></i> Code</a>
+                        <p class="row__stack mono">TensorFlow · CNN</p>
+                        <p class="row__links"><a
+                                href="https://github.com/piyusharma4/Hindi-Numeric-Number-Recognization-using-Convolutional-Neural-Network"
+                                target="_blank" rel="noopener">Code</a></p>
+                    </li>
+                    <li class="row" data-img="assets/img/gesture.jpg">
+                        <span class="row__no mono">05</span>
+                        <div class="row__main">
+                            <h3 class="row__title">Gesture Recognition</h3>
+                            <p class="row__desc">Real-time hand gestures that control operating-system tasks, built
+                                with OpenCV.</p>
                         </div>
-                        <div class="tags">
-                            <span>OpenCV</span><span>Computer Vision</span>
+                        <p class="row__stack mono">OpenCV · Computer Vision</p>
+                        <p class="row__links"><a
+                                href="https://github.com/piyusharma4/Fingure-Gesture-based-recognition-using-OpenCV-and-CNN"
+                                target="_blank" rel="noopener">Code</a></p>
+                    </li>
+                    <li class="row" data-img="assets/img/whatsapp.jpg">
+                        <span class="row__no mono">06</span>
+                        <div class="row__main">
+                            <h3 class="row__title">WhatsApp Chat Analyzer</h3>
+                            <p class="row__desc">A Streamlit app that turns a WhatsApp export into insights for a group
+                                or a single person.</p>
                         </div>
-                    </div>
-                </div>
-                <div class="project-card glass-panel">
-                    <img src="assets/whatsapp_analyzer.jpg" alt="Whatsapp Chat Analyzer" class="project-image">
-                    <div class="project-info">
-                        <h3>Whatsapp Chat Analyzer</h3>
-                        <p>An end-to-end project deployed using Streamlit to analyze WhatsApp conversations, providing
-                            insights for groups or single users.</p>
-                        <div class="project-links">
+                        <p class="row__stack mono">Python · Streamlit · Analysis</p>
+                        <p class="row__links">
                             <a href="https://github.com/piyusharma4/whatsapp_chat_analyzer" target="_blank"
-                                class="link-item"><i class="fab fa-github"></i> Code</a>
+                                rel="noopener">Code</a>
                             <a href="https://piyusharma4-whatsapp-chat-analyzer-app-48g7u7.streamlit.app/"
-                                target="_blank" class="link-item"><i class="fas fa-external-link-alt"></i> Live
-                                Project</a>
+                                target="_blank" rel="noopener">Live</a>
+                        </p>
+                    </li>
+                    <li class="row" data-img="assets/img/music.jpg">
+                        <span class="row__no mono">07</span>
+                        <div class="row__main">
+                            <h3 class="row__title">Music Generation RNN</h3>
+                            <p class="row__desc">An RNN-LSTM trained across genres to generate personalised melodies
+                                with Magenta.</p>
                         </div>
-                        <div class="tags">
-                            <span>Python</span><span>Streamlit</span><span>Data Analysis</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card glass-panel">
-                    <img src="assets/music_generation.jpg" alt="Genre Specific Music Generation" class="project-image">
-                    <div class="project-info">
-                        <h3>Music Generation RNN</h3>
-                        <p>Deep Learning Model (RNN-LSTM) trained on multiple genres to generate personalized music
-                            using the Magenta library.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/piyusharma4/genre-specific-melodies-generation" target="_blank"
-                                class="link-item"><i class="fab fa-github"></i> Code</a>
+                        <p class="row__stack mono">RNN-LSTM · Magenta</p>
+                        <p class="row__links">
+                            <a href="https://github.com/piyusharma4/genre-specific-melodies-generation"
+                                target="_blank" rel="noopener">Code</a>
                             <a href="https://drive.google.com/drive/folders/19pwp-DUN9R0xu4b1QlJX-rHCIM3CwiIc"
-                                target="_blank" class="link-item"><i class="fas fa-music"></i> Melodies</a>
+                                target="_blank" rel="noopener">Melodies</a>
+                        </p>
+                    </li>
+                    <li class="row" data-img="assets/img/housing.jpg">
+                        <span class="row__no mono">08</span>
+                        <div class="row__main">
+                            <h3 class="row__title">Delhi Housing Prediction</h3>
+                            <p class="row__desc">Price prediction for Delhi homes — cleaning, feature engineering and
+                                a deployed Streamlit app.</p>
                         </div>
-                        <div class="tags">
-                            <span>Deep Learning</span><span>RNN-LSTM</span><span>Magenta</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="project-card glass-panel">
-                    <img src="assets/delhi_housing.jpg" alt="Delhi Housing Price Prediction" class="project-image">
-                    <div class="project-info">
-                        <h3>Delhi Housing Prediction</h3>
-                        <p>End-to-end ML project predicting housing prices in Delhi, featuring data cleaning, feature
-                            engineering, and Streamlit deployment.</p>
-                        <div class="project-links">
-                            <a href="https://github.com/piyusharma4/Delhi-Price-Prediction-on-Streamlit" target="_blank"
-                                class="link-item"><i class="fab fa-github"></i> Code</a>
+                        <p class="row__stack mono">ML · Streamlit</p>
+                        <p class="row__links">
+                            <a href="https://github.com/piyusharma4/Delhi-Price-Prediction-on-Streamlit"
+                                target="_blank" rel="noopener">Code</a>
                             <a href="https://piyusharma4-delhi-price-prediction-on-stre-streamlit-app-btj1ma.streamlitapp.com/"
-                                target="_blank" class="link-item"><i class="fas fa-external-link-alt"></i> Live
-                                Project</a>
-                        </div>
-                        <div class="tags">
-                            <span>Machine Learning</span><span>Streamlit</span><span>Predictive Analytics</span>
-                        </div>
+                                target="_blank" rel="noopener">Live</a>
+                        </p>
+                    </li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- ============ EXPERIENCE ============ -->
+        <section class="experience" id="experience" data-theme="dark">
+            <header class="section-head">
+                <p class="label mono"><span>(02)</span> Experience</p>
+                <h2 class="section-title" data-split>Where I've<br><em>worked</em></h2>
+                <p class="section-count mono">03 roles</p>
+            </header>
+
+            <ol class="jobs">
+                <li class="job">
+                    <p class="job__when mono">Mar 2023 — Present</p>
+                    <div class="job__who">
+                        <h3 class="job__co">Samsung Research</h3>
+                        <p class="job__role">Manager, AI Strategy &amp; Innovation Part — Noida</p>
+                    </div>
+                    <ul class="job__what">
+                        <li>Lead the integration of AI features into flagship Samsung smartphones, including news
+                            recommendation and blood glucose.</li>
+                        <li>Built an internal LLM-based RAG system that cut retrieval time by 95%.</li>
+                        <li>Run collaborations with IIT Delhi, Kanpur and Ropar, and with startups such as Sarvam
+                            AI, Jivi AI, Beatoven.AI, Validsoft and Neural Defend.</li>
+                    </ul>
+                </li>
+                <li class="job">
+                    <p class="job__when mono">Oct 2021 — May 2023</p>
+                    <div class="job__who">
+                        <h3 class="job__co">Tata Consultancy Services</h3>
+                        <p class="job__role">Data Analyst, System Engineer</p>
+                    </div>
+                    <ul class="job__what">
+                        <li>Built financial dashboards for DocuSign with 99% uptime.</li>
+                        <li>Optimised Snowflake workflows, cutting query times by 25%.</li>
+                        <li>Received a performance award for problem solving.</li>
+                    </ul>
+                </li>
+                <li class="job">
+                    <p class="job__when mono">Internship</p>
+                    <div class="job__who">
+                        <h3 class="job__co">AT&amp;T</h3>
+                        <p class="job__role">Data Science Intern</p>
+                    </div>
+                    <ul class="job__what">
+                        <li>Built a proof of concept for genre-based music generation with RNN-LSTM.</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <div class="partners" aria-label="Partners">
+                <p class="label mono"><span>↳</span> Partnered with</p>
+                <div class="marquee" data-marquee>
+                    <div class="marquee__track">
+                        <span>IIT Delhi</span><i>✳</i><span>Sarvam AI</span><i>✳</i><span>IIT Kanpur</span><i>✳</i>
+                        <span>Jivi AI</span><i>✳</i><span>IIT Ropar</span><i>✳</i><span>Beatoven.AI</span><i>✳</i>
+                        <span>Validsoft</span><i>✳</i><span>Neural Defend</span><i>✳</i>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="contact" class="section-padding">
-            <h2 class="section-title">Get In Touch</h2>
-            <div class="contact-container glass-panel">
-                <p>Interested in collaborating or have a question? Reach out!</p>
-                <a href="mailto:justpiyushsharma@gmail.com" class="email-link">justpiyushsharma@gmail.com</a>
-                <div class="social-links large">
-                    <a href="https://linkedin.com/in/piyusharma4" target="_blank"><i class="fab fa-linkedin"></i></a>
-                    <a href="https://github.com/piyusharma4" target="_blank"><i class="fab fa-github"></i></a>
-                    <a href="https://huggingface.co/piyusharma" target="_blank">🤗</a>
+        <!-- ============ ABOUT ============ -->
+        <section class="about" id="about" data-theme="light">
+            <header class="section-head">
+                <p class="label mono"><span>(03)</span> About</p>
+                <h2 class="section-title" data-split>The short<br><em>version</em></h2>
+            </header>
+
+            <div class="about__grid">
+                <div class="about__bio">
+                    <p class="about__big">
+                        I sit between the people who invent things and the people who ship them.
+                    </p>
+                    <p>
+                        At Samsung Research Institute in Noida I work on AI/ML innovation and technology strategy —
+                        building LLM-based solutions across visual, gaming and health. Most of the job is turning
+                        research prototypes into products that scale, untangling the data problems in between,
+                        and bringing promising startups into the Samsung ecosystem.
+                    </p>
+                    <p>
+                        Outside work I keep building: RAG systems, restoration pipelines, and small models that
+                        teach me something new.
+                    </p>
+                </div>
+
+                <div class="about__side">
+                    <h3 class="label mono"><span>↳</span> Education</h3>
+                    <ul class="edu">
+                        <li>
+                            <span class="mono">2025 — 26</span>
+                            <b>M.Tech, Artificial Intelligence</b>
+                            <i>IIT Jodhpur</i>
+                        </li>
+                        <li>
+                            <span class="mono">2021 — 23</span>
+                            <b>MBA, Information Technology</b>
+                            <i>Swami Vivekananda Subharti University</i>
+                        </li>
+                        <li>
+                            <span class="mono">2016 — 20</span>
+                            <b>B.Tech, Computer Science (ML)</b>
+                            <i>Amity University</i>
+                        </li>
+                    </ul>
+
+                    <h3 class="label mono"><span>↳</span> Toolkit</h3>
+                    <dl class="kit">
+                        <div>
+                            <dt class="mono">Languages</dt>
+                            <dd>Python, SQL</dd>
+                        </div>
+                        <div>
+                            <dt class="mono">Models</dt>
+                            <dd>PyTorch, TensorFlow, OpenCV, Hugging Face</dd>
+                        </div>
+                        <div>
+                            <dt class="mono">LLM &amp; agents</dt>
+                            <dd>LangChain, CrewAI, RAG, ChromaDB</dd>
+                        </div>
+                        <div>
+                            <dt class="mono">Data &amp; cloud</dt>
+                            <dd>Azure, Snowflake, Docker, Tableau, Git</dd>
+                        </div>
+                        <div>
+                            <dt class="mono">Shipping</dt>
+                            <dd>Flask, Streamlit</dd>
+                        </div>
+                    </dl>
                 </div>
             </div>
+        </section>
+
+        <!-- ============ CONTACT ============ -->
+        <section class="contact" id="contact" data-theme="dark">
+            <p class="label mono"><span>(04)</span> Contact</p>
+            <h2 class="contact__title" data-split>Have a model that<br>should be a <em>product?</em></h2>
+
+            <a class="contact__mail" href="mailto:justpiyushsharma@gmail.com" data-roll>
+                justpiyushsharma@gmail.com
+            </a>
+
+            <ul class="contact__links">
+                <li><a href="https://linkedin.com/in/piyusharma4" target="_blank" rel="noopener">LinkedIn</a></li>
+                <li><a href="https://github.com/piyusharma4" target="_blank" rel="noopener">GitHub</a></li>
+                <li><a href="https://huggingface.co/piyusharma" target="_blank" rel="noopener">Hugging Face</a></li>
+                <li><a href="https://www.kaggle.com/piyusharma" target="_blank" rel="noopener">Kaggle</a></li>
+            </ul>
+
+            <footer class="foot mono">
+                <p>© <span data-year>2026</span> Piyush Sharma</p>
+                <p class="foot__colophon">Set in Archivo, Newsreader &amp; IBM Plex Mono</p>
+                <p><span data-clock>--:--</span> in Noida</p>
+                <a href="#top" data-scroll-to class="foot__top">Back to top ↑</a>
+            </footer>
         </section>
     </main>
 
-    <footer>
-        <p>&copy; 2025 Piyush Sharma.</p>
-    </footer>
-
-    <script src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lenis@1.3.4/dist/lenis.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js" defer></script>
+    <script src="script.js" defer></script>
 </body>
 
 </html>
