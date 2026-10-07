@@ -113,42 +113,47 @@
     }
 
     /* ===============================================================
-       HERO — reverse diffusion
-       x_t = √ᾱ_t · x₀ + √(1 − ᾱ_t) · ε     (cosine schedule, T = 1000)
-       The name is x₀. Load runs t: 1000 → 0. Scrolling away runs it back.
-       The cursor injects local noise that decays — the model re-denoises.
+       HERO — kinetic type
+       The name is set in a few thousand tiles floating on a water surface
+       (a damped 2D wave equation on the tile grid). The cursor makes
+       ripples; each tile tilts with the slope beneath it, catches the light,
+       and flips to its orange back on a steep crest.
+       Load: tiles flip in left → right. Scroll: rows fold shut like blinds.
        =============================================================== */
     const field = (function createField() {
         const host = $('[data-field]');
         const canvas = $('canvas', host);
         const ctx = canvas.getContext('2d');
-        const T = 1000;
-        const readT = $('[data-t]');
-        const readS = $('[data-sigma]');
         const readN = $('[data-points]');
-        if (!finePointer) $('.hero__hint').textContent = 'Touch the name to add noise.';
+        if (!finePointer) $('.hero__hint').textContent = 'Drag across the name to make it ripple.';
 
-        let W = 0, H = 0, dpr = 1, n = 0, cell = 4;
-        let x0, y0, ex, ey, loc, cx = 0, cy = 0, spread = 1;
-        let introT = T, scrollT = 0, t = T;
-        let visible = true, dirty = true, lastW = 0, lastH = 0;
-        const ptr = { x: -9999, y: -9999, px: -9999, py: -9999, active: false };
-        let lastPoke = 0, nextBand = performance.now() + 4500;
+        const DAMP = 0.968;      // how quickly ripples die out
+        const GAIN = 0.85;       // slope → tilt angle
+        
+        let W = 0, H = 0, dpr = 1, cell = 9, cols = 0, rows = 0, N = 0, ox = 0, oy = 0;
+        let ink, delay, a, b;
+        let introP = 0, foldP = 0, introDone = false;
+        let visible = true, dirty = true, energy = 0, lastW = 0, lastH = 0;
+        const ptr = { x: 0, y: 0, has: false };
+        let lastTouch = 0, nextDrop = performance.now() + 7000;
 
-        const css = getComputedStyle(root);
-        const INK = css.getPropertyValue('--ink').trim() || '#131211';
-        const SIGNAL = css.getPropertyValue('--signal').trim() || '#ff4f1f';
-
-        const abar = (tt) => {
-            const c = Math.cos((tt / T) * Math.PI * 0.5);
-            return c * c;
+        // Colour ramps — index 0 faces away from the light, LV faces into it.
+        const LV = 16;
+        const hex = (h) => [1, 3, 5].map((k) => parseInt(h.slice(k, k + 2), 16));
+        const mix = (p, q, t) => {
+            const A = hex(p), B = hex(q);
+            return `rgb(${A.map((v, k) => Math.round(v + (B[k] - v) * t)).join(',')})`;
         };
-        const gauss = () => {
-            let u = 0, v = 0;
-            while (u === 0) u = Math.random();
-            v = Math.random();
-            return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.283185307 * v);
-        };
+        const ramp = (dark, mid, light) => Array.from({ length: LV + 1 }, (_, i) => {
+            const s = (i / LV) * 2 - 1;
+            return s < 0 ? mix(mid, dark, -s) : mix(mid, light, s);
+        });
+        const COLORS = [
+            ramp('#000000', '#131211', '#857d73'), // 0: ink face
+            ramp('#9c2a08', '#ff4f1f', '#ffb497'), // 1: orange back
+            ramp('#cdc6ba', '#ece8e1', '#fdfcf9'), // 2: paper relief
+        ];
+        const buckets = COLORS.map((r) => r.map(() => []));
 
         function build() {
             const r = host.getBoundingClientRect();
@@ -160,7 +165,7 @@
             canvas.width = W * dpr;
             canvas.height = H * dpr;
 
-            // Rasterise the name offscreen and sample it on a grid.
+            // Rasterise the name offscreen
             const off = document.createElement('canvas');
             off.width = W; off.height = H;
             const o = off.getContext('2d', { willReadFrequently: true });
@@ -174,161 +179,181 @@
                 if ('fontStretch' in o) o.fontStretch = stretch;
             };
             o.textBaseline = 'alphabetic';
-
-            let size = 100;
-            setFont(size);
+            setFont(100);
             const widest = Math.max(...lines.map((l) => o.measureText(l).width));
             const lineH = 0.86;
-            size = Math.min(((W - pad * 2) / widest) * 100, H / (lines.length * lineH + 0.06));
-            size = Math.floor(size);
+            const size = Math.floor(Math.min(((W - pad * 2) / widest) * 100, H / (lines.length * lineH + 0.08)));
             setFont(size);
             o.fillStyle = '#000';
             const capH = size * 0.72;
-            const blockH = capH + (lines.length - 1) * size * lineH;
-            const top = (H - blockH) / 2 + capH;
+            const top = (H - (capH + (lines.length - 1) * size * lineH)) / 2 + capH;
             lines.forEach((l, i) => {
                 const w = o.measureText(l).width;
-                const x = i === 0 ? pad : W - pad - w;
-                o.fillText(l, x, top + i * size * lineH);
+                o.fillText(l, i === 0 ? pad : W - pad - w, top + i * size * lineH);
             });
-
             const data = o.getImageData(0, 0, W, H).data;
-            const target = W < 700 ? 2400 : 5200;
-            const sample = (step) => {
-                const pts = [];
-                for (let y = Math.floor(step / 2); y < H; y += step) {
-                    for (let x = Math.floor(step / 2); x < W; x += step) {
-                        if (data[(y * W + x) * 4 + 3] > 128) pts.push(x, y);
-                    }
-                }
-                return pts;
-            };
-            cell = 3;
-            let pts = sample(cell);
-            while (pts.length / 2 > target && cell < 24) pts = sample(++cell);
 
-            n = pts.length / 2;
-            x0 = new Float32Array(n); y0 = new Float32Array(n);
-            ex = new Float32Array(n); ey = new Float32Array(n);
-            loc = new Float32Array(n);
-            for (let i = 0; i < n; i++) {
-                x0[i] = pts[i * 2];
-                y0[i] = pts[i * 2 + 1];
-                ex[i] = gauss();
-                ey[i] = gauss();
+            // Tile grid covering the whole field
+            cell = W < 700 ? 5 : Math.round(clamp(W / 160, 7, 11));
+            cols = Math.ceil(W / cell) + 2;
+            rows = Math.ceil(H / cell) + 2;
+            ox = (W - cols * cell) / 2;
+            oy = (H - rows * cell) / 2;
+            N = cols * rows;
+            ink = new Uint8Array(N);
+            delay = new Float32Array(N);
+            a = new Float32Array(N);
+            b = new Float32Array(N);
+            let count = 0;
+            for (let y = 0; y < rows; y++) {
+                for (let x = 0; x < cols; x++) {
+                    const px = Math.round(ox + (x + 0.5) * cell);
+                    const py = Math.round(oy + (y + 0.5) * cell);
+                    const i = y * cols + x;
+                    if (px >= 0 && py >= 0 && px < W && py < H && data[(py * W + px) * 4 + 3] > 128) {
+                        ink[i] = 1;
+                        count++;
+                    }
+                    delay[i] = (x / cols) * 0.62 + (y / rows) * 0.1 + Math.random() * 0.06;
+                }
             }
-            cx = W / 2; cy = H / 2;
-            spread = Math.max(W, H) * 0.42;
-            readN.textContent = n.toLocaleString('en-US');
+            readN.textContent = count.toLocaleString('en-US');
             dirty = true;
             root.classList.add('field-ready');
         }
 
-        function poke(px, py, radius, strength) {
-            const r2 = radius * radius;
-            for (let i = 0; i < n; i++) {
-                const dx = x0[i] - px, dy = y0[i] - py;
-                const d2 = dx * dx + dy * dy;
-                if (d2 < r2) {
-                    const f = (1 - d2 / r2) * strength;
-                    if (f > loc[i]) loc[i] = f;
+        // Push the water surface down around (px, py), in CSS pixels
+        function drop(px, py, amp, radius) {
+            const cx = (px - ox) / cell, cy = (py - oy) / cell;
+            const R = Math.ceil(radius);
+            const x0 = Math.max(1, Math.floor(cx - R)), x1 = Math.min(cols - 2, Math.ceil(cx + R));
+            const y0 = Math.max(1, Math.floor(cy - R)), y1 = Math.min(rows - 2, Math.ceil(cy + R));
+            for (let y = y0; y <= y1; y++) {
+                for (let x = x0; x <= x1; x++) {
+                    const d = Math.hypot(x - cx, y - cy) / radius;
+                    if (d < 1) a[y * cols + x] -= amp * (0.5 + 0.5 * Math.cos(Math.PI * d));
                 }
             }
-            dirty = true;
+            energy = 1;
         }
 
-        function band() {
-            // An occasional horizontal band of noise — the field never quite sits still.
-            const y = H * (0.15 + Math.random() * 0.7);
-            const h = 6 + Math.random() * 26;
-            for (let i = 0; i < n; i++) {
-                if (Math.abs(y0[i] - y) < h) loc[i] = Math.max(loc[i], 0.38 + Math.random() * 0.2);
+        function step() {
+            let e = 0;
+            for (let y = 1; y < rows - 1; y++) {
+                const row = y * cols;
+                for (let x = 1; x < cols - 1; x++) {
+                    const i = row + x;
+                    let v = (a[i - 1] + a[i + 1] + a[i - cols] + a[i + cols]) * 0.5 - b[i];
+                    v *= DAMP;
+                    b[i] = v;
+                    const m = v < 0 ? -v : v;
+                    if (m > e) e = m;
+                }
             }
-            dirty = true;
+            const t = a; a = b; b = t;
+            energy = e;
         }
 
-        let last = performance.now();
-        function frame(now) {
-            requestAnimationFrame(frame);
-            const dt = Math.min(0.05, (now - last) / 1000);
-            last = now;
-            if (!visible || !n) return;
+        const easeBack = (t) => {
+            const c1 = 1.3, c3 = c1 + 1;
+            return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+        };
 
-            t = reduced ? 0 : Math.max(introT, scrollT);
+        function draw() {
+            for (const set of buckets) for (const bk of set) bk.length = 0;
+            const s = cell * 0.82;
+            const half = s / 2;
+            const intro = introP < 1;
+            const folding = foldP > 0;
 
-            if (!reduced && finePointer && now > nextBand && now - lastPoke > 2500 && t < 5) {
-                band();
-                nextBand = now + 4500 + Math.random() * 4000;
-            }
-
-            if (ptr.active) {
-                const vx = ptr.x - ptr.px, vy = ptr.y - ptr.py;
-                const speed = Math.min(1, Math.hypot(vx, vy) / 40);
-                poke(ptr.x, ptr.y, 70 + speed * 70, 0.45 + speed * 0.5);
-                ptr.px = ptr.x; ptr.py = ptr.y;
-            }
-
-            const g = abar(t);
-            const sg = Math.sqrt(g);
-            const ng = Math.sqrt(1 - g);
-            let anyLocal = false;
-            const decay = Math.pow(0.935, dt * 60);
-            const rho = 0.97;
-            const kick = Math.sqrt(1 - rho * rho);
-            const moving = ng > 0.002;
-
-            if (!dirty && !moving) {
-                for (let i = 0; i < n; i++) if (loc[i] > 0.002) { anyLocal = true; break; }
-                if (!anyLocal) return;
+            for (let y = 1; y < rows - 1; y++) {
+                const fold = folding ? clamp(foldP * 1.7 - (y / rows) * 0.7, 0, 1) * Math.PI * 0.5 : 0;
+                const cy = oy + (y + 0.5) * cell;
+                for (let x = 1; x < cols - 1; x++) {
+                    const i = y * cols + x;
+                    const isInk = ink[i] === 1;
+                    let th = ((a[i + cols] - a[i - cols]) + (a[i + 1] - a[i - 1]) * 0.5) * GAIN;
+                    if (!isInk) {
+                        th *= 0.55;
+                        if (th < 0.035 && th > -0.035) continue;
+                    } else if (intro) {
+                        const l = clamp((introP - delay[i]) / 0.34, 0, 1);
+                        if (l <= 0) continue;
+                        th += (1 - easeBack(l)) * Math.PI * 1.5;
+                    }
+                    th += fold;
+                    const c = Math.cos(th);
+                    const h = s * (c < 0 ? -c : c);
+                    if (h < 0.6) continue;
+                    const sn = Math.sin(th);
+                    const lv = Math.round((clamp(sn, -1, 1) * 0.5 + 0.5) * LV);
+                    const set = isInk ? (c >= 0 ? 0 : 1) : 2;
+                    buckets[set][lv].push(ox + (x + 0.5) * cell - half, cy - h / 2 + sn * s * 0.18, h);
+                }
             }
 
             ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             ctx.clearRect(0, 0, W, H);
-            const s = Math.max(1.6, cell * 0.66);
-            const half = s / 2;
-            const local = 90;
-
-            ctx.fillStyle = INK;
-            const hot = [];
-            for (let i = 0; i < n; i++) {
-                const l = loc[i];
-                if (moving || l > 0.002) {
-                    ex[i] = ex[i] * rho + kick * gauss();
-                    ey[i] = ey[i] * rho + kick * gauss();
+            // paper relief first, then ink, then the orange backs on top
+            for (const set of [2, 0, 1]) {
+                const lvls = buckets[set];
+                for (let lv = 0; lv <= LV; lv++) {
+                    const bk = lvls[lv];
+                    if (!bk.length) continue;
+                    ctx.fillStyle = COLORS[set][lv];
+                    for (let k = 0; k < bk.length; k += 3) ctx.fillRect(bk[k], bk[k + 1], s, bk[k + 2]);
                 }
-                const amp = ng * spread + l * local;
-                const x = cx + sg * (x0[i] - cx) + ex[i] * amp;
-                const y = cy + sg * (y0[i] - cy) + ey[i] * amp;
-                if (l > 0.18) hot.push(x, y);
-                else ctx.fillRect(x - half, y - half, s, s);
-                if (l > 0.002) { loc[i] = l * decay; anyLocal = true; }
-                else loc[i] = 0;
             }
-            ctx.fillStyle = SIGNAL;
-            for (let i = 0; i < hot.length; i += 2) ctx.fillRect(hot[i] - half, hot[i + 1] - half, s, s);
-
-            readT.textContent = String(Math.round(t)).padStart(4, '0');
-            readS.textContent = ng.toFixed(3);
-            dirty = anyLocal;
         }
 
-        // Pointer — mouse or finger
+        function frame(now) {
+            requestAnimationFrame(frame);
+            if (!visible || !N) return;
+
+            // A slow raindrop now and then, so the surface invites a touch
+            if (!reduced && introDone && foldP === 0 && now > nextDrop && now - lastTouch > 4000) {
+                const pick = Math.floor(Math.random() * N);
+                for (let k = 0; k < N; k++) {
+                    const i = (pick + k * 7919) % N;
+                    if (ink[i]) {
+                        drop(ox + ((i % cols) + 0.5) * cell, oy + (Math.floor(i / cols) + 0.5) * cell, 7, 3.2);
+                        break;
+                    }
+                }
+                nextDrop = now + 6500 + Math.random() * 4000;
+            }
+
+            const moving = energy > 0.004;
+            if (moving) step();
+            if (!moving && !dirty) return;
+            draw();
+            dirty = moving;
+        }
+
+        // Pointer — trace the path so fast strokes leave a continuous wake
         host.addEventListener('pointermove', (e) => {
+            if (reduced) return;
             const r = canvas.getBoundingClientRect();
-            ptr.x = e.clientX - r.left;
-            ptr.y = e.clientY - r.top;
-            if (!ptr.active) { ptr.px = ptr.x; ptr.py = ptr.y; }
-            ptr.active = !reduced;
-            lastPoke = performance.now();
+            const x = e.clientX - r.left, y = e.clientY - r.top;
+            if (ptr.has) {
+                const dist = Math.hypot(x - ptr.x, y - ptr.y);
+                const n = Math.max(1, Math.ceil(dist / cell));
+                const amp = clamp(dist / 10, 0.8, 6);
+                for (let k = 1; k <= n; k++) {
+                    drop(ptr.x + ((x - ptr.x) * k) / n, ptr.y + ((y - ptr.y) * k) / n, amp / Math.sqrt(n), 2.4);
+                }
+            }
+            ptr.x = x; ptr.y = y; ptr.has = true;
+            lastTouch = performance.now();
         }, { passive: true });
-        host.addEventListener('pointerleave', () => (ptr.active = false));
+        host.addEventListener('pointerleave', () => (ptr.has = false));
         host.addEventListener('pointerdown', (e) => {
             if (reduced) return;
             const r = canvas.getBoundingClientRect();
-            poke(e.clientX - r.left, e.clientY - r.top, 180, 1);
-            lastPoke = performance.now();
+            drop(e.clientX - r.left, e.clientY - r.top, 14, 4);
+            lastTouch = performance.now();
         });
-        host.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') ptr.active = false; });
+        host.addEventListener('pointerup', (e) => { if (e.pointerType !== 'mouse') ptr.has = false; });
 
         new IntersectionObserver(([e]) => { visible = e.isIntersecting; dirty = true; }).observe(host);
 
@@ -347,16 +372,24 @@
                 build();
                 requestAnimationFrame(frame);
             },
-            setIntro(v) { introT = v; },
-            setScroll(v) { scrollT = v; },
+            setIntro(p) {
+                introP = p;
+                dirty = true;
+                if (p >= 1 && !introDone) {
+                    introDone = true;
+                    if (!reduced) drop(W * 0.3, H * 0.5, 16, 4.5);
+                }
+            },
+            setScroll(p) {
+                if (p !== foldP) { foldP = p; dirty = true; }
+            },
         };
     })();
 
     /* ---------------------------------------------------------------
-       Statement — words resolve from noise as you read
+       Statement — words brighten in reading order as you scroll
        --------------------------------------------------------------- */
     function resolveText(el) {
-        const GLYPHS = 'abcdefghijklmnopqrstuvwxyz#%&*+=/<>';
         const words = [];
         const wrap = (node) => {
             Array.from(node.childNodes).forEach((child) => {
@@ -375,46 +408,16 @@
                 } else if (child.nodeType === 1) wrap(child);
             });
         };
-        el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
         wrap(el);
-        words.forEach((w) => {
-            w.setAttribute('aria-hidden', 'true');
-            w._final = w.textContent;
-            w._seed = Array.from(w._final, () => Math.random());
-            w._state = -1;
-        });
-
-        const fixWidths = () => words.forEach((w) => {
-            w.style.width = '';
-            w.textContent = w._final;
-            w.style.width = w.getBoundingClientRect().width + 'px';
-            w._state = -1;
-        });
-        fixWidths();
-        addEventListener('resize', () => { clearTimeout(fixWidths._t); fixWidths._t = setTimeout(fixWidths, 200); });
 
         const N = words.length;
-        const K = 7;
-        const render = (p) => {
+        const K = 5;
+        return (p) => {
             for (let i = 0; i < N; i++) {
-                const w = words[i];
                 const lp = clamp((p * (N + K) - i) / K, 0, 1);
-                const q = Math.round(lp * 24);
-                if (q === w._state && q !== 0 && q !== 24) continue;
-                w._state = q;
-                w.style.opacity = (0.14 + 0.86 * lp).toFixed(3);
-                if (lp >= 1) { w.textContent = w._final; continue; }
-                let out = '';
-                for (let j = 0; j < w._final.length; j++) {
-                    const ch = w._final[j];
-                    out += w._seed[j] < lp || /[—,.\-]/.test(ch)
-                        ? ch
-                        : GLYPHS[(Math.random() * GLYPHS.length) | 0];
-                }
-                w.textContent = out;
+                words[i].style.opacity = (0.12 + 0.88 * lp).toFixed(3);
             }
         };
-        return render;
     }
 
     /* ---------------------------------------------------------------
@@ -632,7 +635,7 @@
         field.start();
 
         if (!animate) {
-            field.setIntro(0);
+            field.setIntro(1);
             resolve(1);
             odos.forEach(({ el, cols }) => cols.forEach((c) => {
                 c.style.transform = `translateY(${-(c.children.length - 1) * 0.8}em)`;
@@ -644,23 +647,23 @@
         root.classList.add('theme-js');
 
         /* Intro: denoise the name, then bring in the furniture */
-        const intro = { t: 1000 };
+        const intro = { p: 0 };
         const tl = gsap.timeline({ delay: 0.15 });
         tl.to(intro, {
-            t: 0, duration: 2.8, ease: 'power2.inOut',
-            onUpdate: () => field.setIntro(intro.t),
+            p: 1, duration: 2.6, ease: 'power1.inOut',
+            onUpdate: () => field.setIntro(intro.p),
         }, 0)
             .to('.nav', { opacity: 1, duration: 1, ease: 'power2.out' }, 0.4)
             .fromTo('[data-intro]', { opacity: 0, y: 18 }, {
                 opacity: 1, y: 0, duration: 1.2, stagger: 0.12, ease: 'expo.out',
             }, 1.4);
 
-        /* Leaving the hero re-noises the name */
+        /* Leaving the hero folds the tiles shut, row by row */
         ScrollTrigger.create({
             trigger: '.hero',
             start: 'top top',
-            end: 'bottom top',
-            onUpdate: (self) => field.setScroll(Math.pow(self.progress, 1.4) * 1000),
+            end: 'bottom 15%',
+            onUpdate: (self) => field.setScroll(self.progress),
         });
         gsap.to('.hero__base', {
             yPercent: -40, opacity: 0, ease: 'none',

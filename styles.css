@@ -463,8 +463,7 @@ html:not(.theme-js) section[data-theme] {
 }
 
 .statement__text .w {
-    display: inline-block;
-    white-space: pre;
+    transition: opacity 0.25s linear;
 }
 
 .stats {
